@@ -1,0 +1,456 @@
+\documentclass[11pt]{article}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{hyperref}
+\usepackage{acronym}
+
+\newcommand{\bigidea}{.\newline\textbf{BIG IDEA:}\newline}
+
+\title{Research Journal}
+\author{Darren Lund}
+
+%\acrodef{HUP}[HUP]{Heisenberg Uncertainty Principle}
+
+\begin{document}
+\maketitle{}
+
+\section{May 2, 2018}
+\begin{itemize}
+\item[Progress:]
+Initial go through, understanding problem and pointing to materials to research/use.  Found one paper on arXiv.org that seems to talk about a similar project.
+
+\item[Problems:]
+Measurement of success?
+
+\item[Plans:]
+Beam forming in a random way.
+
+Send a few packets until you receive enough for a key.
+Receiver sends key from packets received (random selection of packets).
+Using secrecy code, emitter sends all other packets.
+
+GOAL: Here's a practical way to make SURE that Bob received different packets from Eve.
+
+\item[Papers:]
+
+\end{itemize}
+
+\section{May 3, 2018}
+
+\begin{itemize}
+\item[Progress:]
+Looking at beam forming and trying to understand how it works mathematically.  Made a jupyter notebook to try and graph the signal strength/intensity for a single shift, but it doesn't seem to be working.
+
+\item[Problems:]
+Can't get a mathematical formula for a specific signal beam.  Trying to utilize info found from \href{https://en.wikipedia.org/wiki/Phased_array}{Phased Array}, \href{https://en.wikipedia.org/wiki/Diffraction}{Diffracrtion}, and \href{https://www.youtube.com/watch?v=l4OwU1p8_tE}{Analog Beamforming}.
+
+\item[Plans:]
+Find a way to fully understand beam forming.
+Currently, the thought is to split message into packets, split packets into pieces.  If you need $k_{1}$ packets to form the message, and $k_{2}$ pieces of packet $P_{i}$ to recreate $P_{i}$, then send $k_{2}$ pieces of at most $k_{1}-1$ packets sweeping the beam.  If the beam is created with at least one dead zone (and this dead zone sweeps past Bob) then it will probably sweep past Eve as well.  If you also change the intensity, then you should be able to get it to just reach Bob sometimes.
+
+\item[Papers:]
+Maybe \href{https://yadda.icm.edu.pl/baztech/element/bwmeta1.element.baztech-6a460c56-d9ca-40b1-94fd-236984310580/c/Comesana_1-2014.pdf}{Intro to Virtual Phased Arrays and Beamforming Applications} and/or \href{https://vtechworks.lib.vt.edu/bitstream/handle/10919/27291/ch3.pdf}{Antenna Arrays and Beamforming}?
+
+\end{itemize}
+
+\section{May 7, 2018}
+
+\begin{itemize}
+\item[Progress:]
+Trying to understand beamforming, I decided to refresh my understanding of Fourier transforms, which lead me to \href{https://www.youtube.com/watch?v=spUNpyF58BY}{this} video.  At the end, it states that the Fourier transform is directly linked to the Heisenberg Uncertainty Principle (HUP), which may be something to explore in the future.  Check \href{https://www.youtube.com/watch?v=MBnnXbOM5S4}{this} video for a bit of intuition on the HUP.  Re-evaluated problem, downloaded software to try and assist.
+
+\item[Problems:]
+Can Eve theoretically jam Bob's response?
+Is there a possibility to "launch" signals and have them curve?\newline\newline
+Is there a mathematical way to represent the ideas of beamforming and jamming?\newline\newline
+
+\item[Plans:]
+Go over a few more of the lecture videos from last year, and start reading \href{http://cnx.org/content/col10255/1.4/}{Array Signal Processing}, found online.
+
+\item[Papers:]
+\href{https://aip.scitation.org/doi/pdf/10.1063/1.5011063}{This} seems promising.
+\href{http://cnx.org/content/col10255/1.4/}{Array Signal Processing} EDIT: this wasn't that helpful.  Student project that is ill written and not easily understood.
+
+\end{itemize}
+
+\section{May 8, 2018}
+
+\begin{itemize}
+\item[Progress:]
+Found something that seems mathematically helpful.  See first paper listed in Papers today.  Also came up with a few more ideas about how to guarantee that Bob receives something that Eve doesn't.
+
+\item[Problems:]
+Still mostly just the physics of the system.  I think that if I can model it and reasonably indicate the signal to noise ratio at any given point, then testing the idea in plans from today and May 3rd should give an indication of whether or not it will work.\newline
+Can you control the range (distance) of a signal? If yes, see second "big idea".
+
+\item[Plans:]
+Use jamming as well.  Create beams of noise that flank your beam, as well as beams that cross your beam at every possible distance point.  This should guarantee that if Bob and Eve are in different locations, then different packets will be jammed at their respective positions.
+
+% Try this.
+\bigidea
+If Alice "sweeps" her "shielded" beam around where Bob is in a specific order (not sending enough packets to get the full message), and Bob responds with which packets he received, Alice should be able to use the angles of her beams to determine the arc-length corresponding to where Bob is distance wise from Alice.  She can then use this to get the distance to Bob and narrow here "shield" so that it diverges right before it gets to Bob.  This would require Eve to be "behind" Bob (with respect to Alice) in order to avoid the shield.  This, however, would then mean that Eve has a worse channel than Bob, and other methods can be applied.\newline
+ASSUMPTION: Bob and Alice are stationary relative to each other.
+
+\bigidea
+Propagate two signals simultaneous, the desired signal and the negative of it.  IF you can determine the range of the signal, then if you have a lower bound for Bob's distance, Alice can transmit the negative to fade out before it reaches Bob, shortening the "distance" where the signal is viable (i.e. isn't canceled out by it's negative counterpart).\newline
+ASSUMPTION: It is possible to control the range of a signal to some degree of percision.
+
+\item[Papers:]
+\href{https://onlinelibrary.wiley.com/doi/pdf/10.1002/tee.21960}{THIS} seems the most helpful so far.
+
+\end{itemize}
+
+\section{May 9, 2018}
+
+\begin{itemize}
+\item[Progress:]
+I think I have a better idea of how to compute the signal strength.  Functional Beamforming (FB) seems to be a good way to implement the "shield" idea.  If you have a beam of noise, containing a much narrower beam of the signal, then you can point them in the same direction and get a narrow beam with high SNR and a "shield" of practically just noise.  Maybe you could improve this further by having another beam (as narrow or narrower than the signal) that cancels out the noise you're producing in the wider beam?
+
+\item[Problems:]
+What if you only have a short message to transmit?  Can this scale down to smaller message sizes?  
+What kind of distance/range are we thinking about?  Is reflecting off of something in space practical, or overkill?
+
+\item[Plans:]
+TOMORROW : Make a list of all questions/concerns you currently have to ask on Friday.
+\bigidea
+Maybe what you want to do is send a generic beam with the first packet out in Bob's general direction until Bob transmits that he's received it.  Once that happens, you narrow the signal beam, shift it a bit, and transmit the next packet.  If Bob doesn't signal that he received it after a while, shift the beam to encompass one of the portions included in the previous beam, but excluded in the current one and transmit the SAME packet.  Repeat this process using what you can to narrow in on Bob's exact position.  If the noise beam encompasses the entirety of the signal beam, then Eve's only chance of receiving the message would be if she also was inside the signal beam, i.e. between Bob and Alice.\newline
+For the distance part from last time, if you can control when a signal starts to "fade", then you want the noise to fade almost completely at Bob, and the actual signal to begin to fade just past Bob.\newline
+ASSUMPTION : We know the distance to/position of Bob's device.
+
+\item[Papers:]
+\href{http://www.bebec.eu/Downloads/BeBeC2014/Papers/BeBeC-2014-01.pdf}{MATH!} \textbf{THIS IS THE IMPORTANT PAPER SO FAR}.
+
+\end{itemize}
+
+\section{May 10, 2018}
+
+\begin{itemize}
+\item[Progress:]
+Better understanding of how the channels work.  I've also started creating a class in Python that seems like it will be helpful for mimicking a lot of MatLab's stuff (at a lower level).  This is important/necessary because I don't know how to test my ideas in MatLab, so trying to figure out how their tools work, I can then create one that is specific to the implementation I want.\newline
+Well, I tried it in python and while I definitely need it to understand things better, things are obviously faster in MatLab...so the next step is to try and figure out how to make the model to test ideas in MatLab.
+
+\item[Problems:]
+I still don't know how exactly these channels work.  I think what I want to do is make a plot of probable bit error rate as a function of position and beams being used.
+
+\item[Plans:]
+See about graphing bit error rate as a function of position and beams being used.  Then I can get a better feeling for how changing the beams will increase/decrease the probability that Eve receives the message as well.\newline
+Read a LOT of MatLab documentation.
+
+\item[Papers:]
+I think this \href{https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=1055892}{BCC} paper should be helpful.  If nothing more, it helps me see a mathematically heavy project in this field.
+
+\end{itemize}
+
+\section{May 11, 2018}
+
+\begin{itemize}
+\item[Progress:]
+Coded up the function for the generalized functional beamformer.  Learned a bit more about implementing things in MatLab/Simulink from Zach, as well as physical nature of communications from Marco.
+
+\item[Problems:]
+I think my shielding idea won't work.  based on a discussion Marco had with Zach about getting an approximation for ambient noise to filter it out should mean that as long as Eve can listen to the part without the signal simultaneously, she can filter the added noise.
+
+\item[Plans:]
+Study the effects of different power levels and how to introduce fading into the system.
+
+\item[Papers:]
+
+
+\end{itemize}
+\newpage
+
+\section{Questions for Meeting: May 14, 2018}
+\begin{enumerate}
+\item Which basic channel model should be implemented?  Is it the basic wiretap channel, does it include position relative to the transmitter/receiver, ..?
+\item Is this supposed to be a theoretical, mathematically based proof, or an empirically tested one?
+\begin{enumerate}
+\item If it's theoretical, how can I write the probability that Eve receives a packet based on the beam(s) I'm generating/signals present at her position?
+\item If it's empirical, which models should I use? Do you already have the algorithms for the channel coded up/are they easily emulated?
+\end{enumerate}
+\item Project Clarification
+\begin{enumerate}
+\item What is the final "end" goal quantitatively?
+\item How can I measure the success of my ideas?
+\item What point do you want me to get to so your algorithms can be utilized?
+\end{enumerate}
+\item How computationally heavy IS beamforming?  How is it used in practice?
+\item What does the Cross Spectral Matrix do in beamforming?  Physically, what does it mean/how is it used?
+\end{enumerate}
+\newpage
+
+\section{May 15, 2018}
+\begin{itemize}
+\item[Progress:]
+It seems that the best option for implementing the channel is to use some of the stuff from the slides Jo\~ao provided to try and model fading in it's 3 primary forms.\newline
+Want to find the cardinality of the set of packets that Bob received that Eve didn't, and show that this expected cardinality is greater than or equal to 1.  Let $N$ be the set of all packets being transmitted, $B_{l}$ the event that Bob receives packet $l$, and $E_{l}$ the event that Eve receives packet $l$, then I want $\left|\{l | B_{l} \land \lnot E_{l}\}_{l \in N}\right| \geq 1$.
+
+\item[Problems:]
+I need to have some kind of probability to describe the successful reception of a packet or not.  The paper that I found today seems promising, and contains a calculation for that in a MISO (Multiple Input Single Output) model that uses delated feedback, but it's dense.  It will take some time to figure out what everything means, and likewise, how I can adapt it to fit the channel model I'll eventually have.
+
+\item[Plans:]
+Keep going over all the specifics for fading in a wireless channel so I can build a good model.  I also might want to look up what different models have already been coded up through File Exchange, as suggested by Marco.
+
+\item[Papers:]
+\href{https://www.ece.ucsb.edu/~yoga/tsp.pdf}{Packet Error Probability of a Transmit Beamforming System with Imperfect Feedback}.
+
+\end{itemize}
+
+\section{May 16, 2018}
+\begin{itemize}
+\item[Progress:]
+I believe I want to use a Rayleigh Fading model.  Everything I've looked at has implied either Rayleigh or Rician, but Rician is only used when there is a clear line of sight, which usually isn't the case.  Rayleigh fading is normally distributed complex i.i.d, with $\mu = 0$ and $\sigma^{2} = \frac{1}{2}$ for both real and imaginary components.  I.E., $x$ and $y$ are normally distributed with parameters described above, and $z = x + iy$.  This gives $a(t) = \sqrt{x^{2}(t) + y^{2}(t)} \Rightarrow \mathbb{E}[a^{2}(t)] = 1$ which implies the signal-to-noise ratio is not affected by fading.\newline
+You want to maximize the probability that Bob receives a packet and Eve doesn't (which is equivalent to maximizing the probability that Eve receives a packet that Bob doesn't).  If inside the beam there's a certain probability that any given receiver gets a packet (and this is the same regardless of where in the beam you are) then this means that $P(B_{l}) = P(E_{l})$, and $P(\lnot B_{l}) = P(\lnot E_{l})$, giving us $P(B_{l}) + P(\lnot E_{l}) = 1$, as well as $P(B_{l} \land \lnot E_{l}) = P(B_{l})P(\lnot E_{l}) = C$ where our goal is to maximize $C$.  So, letting $P(B_{l}) = x$ and $P(\lnot E_{l}) = y$, we have $\textnormal{max} xy$ subject to $x+y = 1$, which has solution $x = y = \frac{1}{2}$.
+
+\item[Problems:]
+I'm still not sure which assumptions are good and what channel models to use.  So far I have: Assumption 1 - Bob and Eve are both always in the beam (because if either of them isn't, then the probability of them receiving the packet is 0, so that case is trivial; Assumption 2 - The channel is constant over the time it takes to transmit a single \{bit/symbol/packet\}.
+
+\item[Plans:]
+Use formulas I have to think about how best to model the channel.  Include fading, path loss, shadowing, gaussian noise...?\newline
+Figure out how to manipulate the probability of receiving a packet inside the beam.
+
+\item[Papers:]
+\href{https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=380184}{Rayleigh Fading} stuff.
+
+\end{itemize}
+
+\section{May 17, 2018}
+\begin{itemize}
+\item[Progress:]
+Wrote down what the problem looks like mathematically (more or less) and am working on a way to make it solvable.
+
+\item[Problems:]
+Right now, I need a way to relate the probability that Bob gets an erroneous bit and the probability that Eve gets an erroneous bit.  Otherwise, the system is underdetermined and I don't really know where to go from there with it.
+
+\item[Plans:]
+Currently I'm running a simulation to approximate BER at certain distances/angles for a specific beam and then use those values in order to calculate the probability of receiving a packet at that position.  Then use that "data" to approximate the following: if Bob is located at $(r,\theta)$, then if Eve is located at \{position in graph\}, the value is the probability that Bob receives a packet that Eve didn't (under some setup of packet length and whatnot).
+
+\item[Papers:]
+\href{https://link.springer.com/content/pdf/10.1007\%2F3-540-36087-5_43.pdf}{Nakagami Fading} seems to be a more general/flexible model of both Rayleigh and Rician fading.  This paper lays out a lot of the thought behind calculating the probability of packet error, and should be kept.
+
+\end{itemize}
+\newpage
+
+\section{Meeting: May 21, 2018}
+\begin{itemize}
+\item[Progress:]
+Created a few different algorithms for approximating BER with the beamforming ideas, but I'm not sure how valid they are.  I've looked into a bit of the math behind beamforming and channel modeling, and, given a few assumptions, have made some progress in determining how to ensure Bob gets something Eve doesn't.  In essence, the thought is to maximize the probability that Bob got a packet that Eve didn't.  However, if Bob's and Eve's probabilities are independent, and simply a function of the channel, then they should be equal.  Thus, if $B_{l}$ is the probability of Bob receiving packet $l$, and $E_{l}$ the probability of Eve receiving it, then we want to maximize $B_{l}(1-E_{l})$ subject to $B_{l} = E_{l}$ which occurs when these are both $\frac{1}{2}$.
+
+\item[Problems:]
+\begin{enumerate}
+\item I'm not sure how valid my channel modeling is; especially concerned with how to translate the linear algebra I'm using into meaningful statements.
+\item I don't know if there's a way to hinder Eve's channel without also hindering Bob's; likewise, I don't know if there's a way to improve Bob's channel without improving Eve's.
+\item How to represent the difference between Eve and Bob's channel so that I can represent who got what?
+\item What exactly does the covariance/variance represent in the case of communications?
+\end{enumerate}
+
+\item[Plans:]
+\begin{enumerate}
+\item Working through the math more to see what comes out.
+\item Verify my algorithms/find ones that make more sense.
+\item Try to simulate actual situation.
+\end{enumerate}
+
+\item[Papers:]
+\begin{enumerate}
+\item \href{https://link.springer.com/content/pdf/10.1007\%2F3-540-36087-5_43.pdf}{Nakagami Fading}
+\item \href{https://www.ece.ucsb.edu/~yoga/tsp.pdf}{Packet Error Probability of a Transmit Beamforming System with Imperfect Feedback}
+\item \href{https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=380184}{Packet Error Rate in the Non-Interleaved Rayleigh Channel}
+\end{enumerate}
+
+\end{itemize}\newpage
+
+\section{Meeting: May 25, 2018}
+\begin{itemize}
+\item[Progress:]
+Looked more into Beamforming and found some papers about it and what people are using it for.  Mostly it's just a nice tool to increase the signal power in a specific direction, while simultaneously decreasing the signal power in others.  People use different methods and ideas to decrease the side lobes, though for all of them, they don't connect the math to the physical representation of the signals.  I understand better why the math comes out the way it does, but I don't have it all down yet.\newline
+I also believe I know the assumptions that I want to use for the channel:
+\begin{enumerate}
+\item MISO situation where Alice has $L \geq 2$ antennas
+\item The channel experiences AWGN and Rayleigh fading (distance attenuation?)
+\item Probability of receiving a package is based on SINR as a function of angle (and distance?) from Alice (using Cyclic Redundancy Check to verify packets).
+\end{enumerate}
+
+\item[Problems:]
+\begin{enumerate}
+\item Should I be attacking SINR, or actually evaluating probabilities of packet error?
+\item I'm not quite sure what my next step should be, or where I should be taking things.
+\end{enumerate}
+
+\item[Plans:]
+\begin{enumerate}
+\item Packet Loss Probability as function of SINR.
+\item SINR as a function of $\theta$/beam.
+\item Packet loss comparison between Bob and Eve as a function of angle between them (relative to 
+Alice).
+\end{enumerate}
+In general,
+\begin{enumerate}
+\item Dig more in depth in papers that I think are helpful.
+\item Reframe problem so that I understand better where I'm at and what I'm working towards.
+\end{enumerate}
+
+\item[Papers:]
+See Papers folder.
+
+\end{itemize}\newpage
+
+\section{Meeting: June 1, 2018}
+\begin{itemize}
+\item[Progress:]
+Coded up calculations for SNR, BER, and PLP (Packet Loss Percentage).  Current example in code has the following properties:
+\begin{enumerate}
+\item Transmitters                               : 7
+\item Wavelength of                            : 1
+\item AWGN variance                         : 1
+\item Rayleigh variance                      : 1
+\item Distance Attenuation Exponent : 2
+\item Packet length                             : 10 bits
+\item Number of Packets sent            : 51
+\item BPSK modulation with CRC
+\end{enumerate}
+
+\item[Problems:]
+\begin{enumerate}
+\item Distance/SINR units.
+\item Complex values.
+\item Optimal PLP.
+\item Need to go back and list assumptions made while writing code for checking.
+\item Someone else looking over the equations in use would be nice.
+\end{enumerate}
+
+\item[Plans:]
+\begin{enumerate}
+\item Go deeper into equations to understand them better.
+\item Look at PLP as a function: what variables go into it and how do those variables effect it.
+\item Go back to Functional Beamforming and see what's up.
+\item Consolidate code to make it more accessible.
+\end{enumerate}
+
+\item[Papers:]
+\href{https://www.unilim.fr/pages_perso/vahid/notes/ber_awgn.pdf}{BER from SINR} from different modulation schemes.
+
+\end{itemize}\newpage
+
+\section{Meeting: June 8, 2018}
+\begin{itemize}
+\item[Progress:]
+\begin{enumerate}
+\item Tried to figure out the physics of transmitting for Functional Beamforming, but didn't make much progress.
+\item MISO should easily extend to a MIMO setting, so we can focus on just MISO without loss of generality.
+\end{enumerate}
+
+\item[Problems:]
+\begin{enumerate}
+\item Nothing I've read seems to help with using reciprocity to implement Functional Beamforming in the transmit mode.
+\item Model is currently spread out.  Need it condensed for analysis.
+\end{enumerate}
+
+\item[Plans:]
+\begin{enumerate}
+\item Write up my model: assumptions made, equations used, where those equations come from and why they're valid, etc.
+\item Read the referenced papers.
+\item Expand on code to simulate sending a signal, tracking what occurs.  Current thought is to do a colormap-like setup where each point is calculated as whether or not Bob's position received something that point didn't.
+\item Go through CITI training (at least half).
+\end{enumerate}
+First situation: beamform and oscillate every time regardless, and see how it works
+
+\item[Papers:]
+See Papers folder in Google Drive.
+
+\end{itemize}\newpage
+
+\section{Meeting: June 19, 2018}
+\begin{itemize}
+\item[Progress:]
+\begin{enumerate}
+\item Typed up most of the bare bones for calculations thus far.
+\item Read one of the two referenced papers.
+\item Finished CITI training.
+\end{enumerate}
+
+\item[Problems:]
+\begin{enumerate}
+\item Not sure whether I should simulate the entire process of generating a signal, transmitting, and then receiving, or should just use the calculated Packet Loss Probability to arbitrarily drop packets.
+\item Don't have access to Stopping Sets for Physical-Layer Security paper.
+\end{enumerate}
+
+\item[Plans:]
+\begin{enumerate}
+\item Continue to write up my model: organize thoughts/sections, fill out ideas, etc.
+\item Continue to read and understand the referenced papers.
+\item Expand on code to generate needed/desired figures.  Current thought is to do a colormap-like setup where each point is calculated as whether or not Bob's position received something that point didn't.
+\end{enumerate}
+
+\item[Papers:]
+See Papers folder in Google Drive.
+
+\end{itemize}\newpage
+
+\section{Meeting: June 28, 2018}
+\begin{itemize}
+\item[Progress:]
+\begin{enumerate}
+\item Built the "easier" simulator.
+\item IT SEEMS TO WORK!! =D (at least in this simulator).
+\item Ran a few tests.
+\end{enumerate}
+
+\item[Problems:]
+\begin{enumerate}
+\item Can't control SINR like I thought.  It depends on the random fading which can't be determined in advance.
+\item Fewer valid beam angles than I thought.
+\item Simulations take a LONG time.  I calculated that to do 1,000 trials of "sending" 1,000 packets of 51 bits, it would take 9-10 days.
+\item Last trial took 32 iterations of sending the packets and $>$14 minutes.
+\end{enumerate}
+
+\item[Plans:]
+\begin{enumerate}
+\item Write full mode/speed up short one.
+\item Continue to read and understand the referenced papers, and those whose equations are used.
+\item Write more.
+\end{enumerate}
+
+\item[Papers:]
+See Papers folder in Google Drive.
+
+\end{itemize}\newpage
+
+\section{Meeting: July 5, 2018}
+\begin{itemize}
+\item[Progress:]
+\begin{enumerate}
+\item Tried to optimizer/reorganize the code (reduced single iteration from 14 min to 1 min).
+\item Found a few bugs that I needed to fix (angle and beam orientation).
+\item Began a trial (crashed w/out returning anything first time).
+\item Each trial is "sending" 100 packets of 51 bits each.
+\end{enumerate}
+
+\item[Problems:]
+\begin{enumerate}
+\item I couldn't really improve the code for now, just reduced the intensity of the trial.
+\item I haven't taken into account distance, but I might need to in order for things to make sense.
+\item Don't have results yet, but with time, that should be fixed.
+\end{enumerate}
+
+\item[Plans:]
+\begin{enumerate}
+\item What is the fraction of the secret you can keep by editing the approach.
+\begin{enumerate}
+\item What percentage of packets Eve/position gets as opposed to Bob.
+\item Change while loop to for so that I can say "For k times, do this funky algorithm, then directly transmit the rest directly at him."
+\end{enumerate}
+\item Include distance.
+\item Find better way to store results.
+\item Run LOTS of trials; rewrite code to save it and keep track of it better.
+\item Write things up.
+\item Make everything a function of Packet Error Probability.
+\item COMMENT THE CODE!!
+\end{enumerate}
+
+\item[Papers:]
+See Papers folder in Google Drive.
+
+\end{itemize}
+
+\end{document}
